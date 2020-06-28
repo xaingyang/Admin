@@ -1,25 +1,40 @@
 import Vue from 'vue'
 
-import 'normalize.css/normalize.css' // A modern alternative to CSS resets
+// 引入专门的reset.css模块
+import 'normalize.css/normalize.css'
 
+// 完整引入element-ui
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-// import locale from 'element-ui/lib/locale/lang/zh-CN' // lang i18n
 
+// 引入es6模块化的测试模块
 import './test/es-module/test2'
 import './test/es-module/test4'
 
-import '@/styles/index.scss' // global css
+// 引入全局样式
+import '@/styles/index.scss'
 
 import App from './App'
+
+// 引入vuex的store对象模块
 import store from './store'
+
+// 引入vue-router的router对象模块
 import router from './router'
 
-import '@/icons' // icon
+// 引入svg-icon的主模块
+import '@/icons'
+
+// 引入权限控制的主模块
 import '@/permission' // permission control
 
+// 引入按钮级别权限控制的工具函数
 import { hasBtnPermission } from './utils/permission'
+
+// 引入包含所有接口请求函数模块的API对象
 import * as API from '@/api'
+
+// 引入准备全局注册的组件
 import HintButton from '@/components/HintButton'
 import CategorySelector from '@/components/CategorySelector'
 
@@ -27,9 +42,11 @@ import CategorySelector from '@/components/CategorySelector'
 Vue.component('HintButton', HintButton)
 Vue.component('CategorySelector', CategorySelector)
 
+// 挂载到Vue原型对象上, 以便组件中直接可见
 Vue.prototype.$hasBP = hasBtnPermission
-Vue.prototype.$API = API // 将包含所有接口请求函数的对象让所有组件可见
+Vue.prototype.$API = API
 
+// 引入mockjs的配置, 不使用
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -38,14 +55,12 @@ Vue.prototype.$API = API // 将包含所有接口请求函数的对象让所有�
  * Currently MockJs will be used in the production environment,
  * please remove it before going online ! ! !
  */
-if (process.env.NODE_ENV === 'production') {
-  const { mockXHR } = require('../mock')
-  mockXHR()
-}
+// if (process.env.NODE_ENV === 'production') {
+//   const { mockXHR } = require('../mock')
+//   mockXHR()
+// }
 
-// set ElementUI lang to EN
-// Vue.use(ElementUI, { locale })
-// 如果想要中文版 element-ui，按如下方式声明
+// 声明使用element插件
 Vue.use(ElementUI)
 
 Vue.config.productionTip = false

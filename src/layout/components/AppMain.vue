@@ -1,7 +1,8 @@
 <template>
   <section class="app-main">
+    <!-- 对应的过渡样式定义在 transition.scss 中-->
     <transition name="fade-transform" mode="out-in">
-      <!-- key值发生变化时, 触发过渡 -->
+      <!-- 给在 <transition> 组件中的多个元素设置 key 是一个更好的实践 -->
       <router-view :key="key" />
     </transition>
   </section>
@@ -11,6 +12,9 @@
 export default {
   name: 'AppMain',
   computed: {
+    /* 
+    将当前请求的路由路径作为标识key
+    */
     key() {
       return this.$route.path
     }

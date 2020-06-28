@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import createPersistedState from 'vuex-persistedstate'
+// import app from './modules/app'
+// import permission from './modules/permission'
+// import settings from './modules/settings'
+// import user from './modules/user'
 
 import getters from './getters'
 
@@ -12,25 +15,23 @@ Vue.use(Vuex)
 */
 const context = require.context('./modules', false, /\.js$/)
 const modules = context.keys().reduce((modules, modulePath) => {
-  // set './app.js' => 'app'
+  // './app.js' => 'app'
   const moduleName = modulePath.replace(/^\.\/(.*)\.\w+$/, '$1')
   modules[moduleName] = context(modulePath).default
   return modules
 }, {})
 
+// 创建store对象
 const store = new Vuex.Store({
+  /* 
+  modules: {
+    app,
+    permission,
+    settings,
+    user
+  }, */
   modules,
   getters,
-  // 解决刷新vuex状态丢失问题
-  plugins: [createPersistedState({
-    storage: window.sessionStorage,
-    reducer(val) {
-      return {
-        // 只储存state中的assessmentData
-        dict: val.dict
-      }
-    }
-  })]
 })
 
 export default store

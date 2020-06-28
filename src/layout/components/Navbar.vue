@@ -1,15 +1,19 @@
 <template>
   <div class="navbar">
-    <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+    <hamburger :is-active="sidebar.opened" class="hamburger-container" 
+      @toggleClick="toggleSideBar" />
 
     <breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu">
-      <el-dropdown class="avatar-container" trigger="click">
+      <div class="right-menu-item">{{name}}</div>
+      <el-dropdown class="avatar-container right-menu-item" trigger="click">
+        <!-- 默认插槽内容 -->
         <div class="avatar-wrapper">
           <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
           <i class="el-icon-caret-bottom" />
         </div>
+        <!-- 命名插槽内容 -->
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
             <el-dropdown-item>首页</el-dropdown-item>
@@ -34,13 +38,22 @@ export default {
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar'
+      'avatar',
+      'name'
     ])
   },
   methods: {
+
+    /* 
+    切换菜单导航的显示
+    */
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
+
+    /* 
+    请求退出登陆, 并跳转到登陆界面
+    */
     async logout() {
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
@@ -85,20 +98,11 @@ export default {
 
     .right-menu-item {
       display: inline-block;
-      padding: 0 8px;
+      padding: 0 4px;
       height: 100%;
       font-size: 18px;
       color: #5a5e66;
       vertical-align: text-bottom;
-
-      &.hover-effect {
-        cursor: pointer;
-        transition: background .3s;
-
-        &:hover {
-          background: rgba(0, 0, 0, .025)
-        }
-      }
     }
 
     .avatar-container {

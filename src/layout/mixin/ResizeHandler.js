@@ -1,3 +1,6 @@
+/* 
+监视当前显示的设备是浏览器还是手机 ==> 通知vuex更新状态数据 ==> 界面做相应的更新显示 
+*/
 import store from '@/store'
 
 const { body } = document
@@ -11,12 +14,15 @@ export default {
       }
     }
   },
+  
   beforeMount() {
     window.addEventListener('resize', this.$_resizeHandler)
   },
+
   beforeDestroy() {
     window.removeEventListener('resize', this.$_resizeHandler)
   },
+  
   mounted() {
     const isMobile = this.$_isMobile()
     if (isMobile) {
@@ -24,6 +30,7 @@ export default {
       store.dispatch('app/closeSideBar', { withoutAnimation: true })
     }
   },
+
   methods: {
     // use $_ for mixins properties
     // https://vuejs.org/v2/style-guide/index.html#Private-property-names-essential

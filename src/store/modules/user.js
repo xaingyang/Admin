@@ -4,12 +4,12 @@ import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
   return {
-    token: getToken(),
-    name: '',
-    avatar: '',
+    token: getToken(), // 登陆用户的token, 初始值从cookie中读取
+    name: '', // 用户名
+    avatar: '', // 用户头像图片地址
 
-    buttons: [], // 所有按钮权限的数组
-    roles: [] // 所拥有角色的数组
+    buttons: [], // 当前用户的按钮权限的数组
+    roles: [] // 当前用户所拥有角色的数组
   }
 }
 
@@ -45,8 +45,8 @@ const actions = {
     return new Promise((resolve, reject) => {
       loginAPI.login(username.trim(), password).then(result => {
         const { data } = result
-        setToken(data.token)
-        commit('SET_TOKEN', data.token)
+        setToken(data.token) // 将token保存到cookie中
+        commit('SET_TOKEN', data.token) // 将token保存到state中
         resolve()
       }).catch(error => {
         reject(error)
@@ -89,9 +89,9 @@ const actions = {
   /* 
   退出登陆
   */
-  logout({ commit, state }) {
+  logout({ commit }) {
     return new Promise((resolve, reject) => {
-      loginAPI.logout(state.token).then(() => {
+      loginAPI.logout().then(() => {
         removeToken() // must remove  token  first
         resetRouter()
         commit('RESET_STATE')
@@ -105,17 +105,20 @@ const actions = {
   /* 
   删除token与重置状态
   */
-  resetToken({ commit }) {
+  async resetToken({ commit }) {
+    /* 
     return new Promise(resolve => {
       removeToken() // must remove  token  first
       commit('RESET_STATE')
       resolve()
-    })
+    }) */
+    removeToken() // must remove  token  first
+    commit('RESET_STATE')
   }
 }
 
 export default {
-  namespaced: true,
+  namespaced: true, // dipatch('user/getInfo')
   state,
   mutations,
   actions

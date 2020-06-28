@@ -8,11 +8,12 @@ import getPageTitle from '@/utils/get-page-title' // 获取应用头部标题的
 
 NProgress.configure({ showSpinner: false }) // 配置NProgress: 不显示右侧旋转进度条
 
-const whiteList = ['/login'] // no redirect whitelist
+// 不用进行登陆token检查的白名单路径数组
+const whiteList = ['/login']
 
 // 注册全局前置守卫: 在路由准备跳转前执行
 router.beforeEach(async(to, from, next) => {
-  // console.log('beforeEach', hasLogin)
+  // debugger
   // 在显示进度条
   NProgress.start()
 
@@ -21,32 +22,32 @@ router.beforeEach(async(to, from, next) => {
 
   // 获取cookie中保存的token
   const token = store.getters.token
-  // 如果token存在
+  // 如果token存在(已经登陆或前面登陆过)
   if (token) {
-    // 如果请求的是登陆路径
+    // 如果请求的是登陆路由
     if (to.path === '/login') {
       // 直接跳转到根路由, 并完成进度条
       next({ path: '/' })
       NProgress.done()
-    } else {
-      // 当前是否已经登陆
+    } else { // 请求的不是登陆路由
+      // 是否已经登陆
       const hasLogin = !!store.getters.name
-      
       // 如果已经登陆直接放行
       if (hasLogin) {
         next()
-      } else {// 如果还没有登陆
+      } else { // 如果还没有登陆
         try {
-          // 请求获取用户信息
+          // 异步请求获取用户信息
           await store.dispatch('user/getInfo')
-          // 请求获取当前用户的权限路由
+          // 成功后, 请求获取当前用户的所有权限路由数组
           const asyncRoutes = await store.dispatch('permission/generateRoutes')
-          // 动态添加可访问的权限路由, 注意将lastRoute放在最后
-          router.addRoutes(asyncRoutes.concat(lastRoute))
-          console.log('asyncRoutes', asyncRoutes.concat(lastRoute))
+          // 动态添加可访问的路由, 注意将lastRoute放在最后
+          // router.addRoutes(asyncRoutes.concat(lastRoute))
+          router.addRoutes([...asyncRoutes, lastRoute])
+          // console.log('asyncRoutes', asyncRoutes.concat(lastRoute))
           // 跳转到目标路由去, 只是强制用替换模式
           next({ ...to, replace: true })
-        } catch (error) { // 如果请求处理过程中出错 
+        } catch (error) { // 如果请求处理过程中出错
           // 重置token
           await store.dispatch('user/resetToken')
           // 提示错误信息
@@ -63,7 +64,7 @@ router.beforeEach(async(to, from, next) => {
     if (whiteList.indexOf(to.path) !== -1) {
       // 放行
       next()
-    } else { 
+    } else {
       // 如果没在白名单中, 跳转到登陆路由携带原目标路径
       next(`/login?redirect=${to.path}`)
       // 完成进度条
