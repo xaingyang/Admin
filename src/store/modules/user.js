@@ -4,12 +4,12 @@ import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
   return {
-    token: getToken(), // 登陆用户的token, 初始值从cookie中读取
-    name: '', // 用户名
-    avatar: '', // 用户头像图片地址
+    token: getToken(),
+    name: '',
+    avatar: '',
 
-    buttons: [], // 当前用户的按钮权限的数组
-    roles: [] // 当前用户所拥有角色的数组
+    buttons: [], // 所有按钮权限的数组
+    roles: [] // 所拥有角色的数组
   }
 }
 
@@ -89,9 +89,9 @@ const actions = {
   /* 
   退出登陆
   */
-  logout({ commit }) {
+  logout({ commit, state }) {
     return new Promise((resolve, reject) => {
-      loginAPI.logout().then(() => {
+      loginAPI.logout(state.token).then(() => {
         removeToken() // must remove  token  first
         resetRouter()
         commit('RESET_STATE')

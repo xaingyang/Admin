@@ -5,14 +5,11 @@
     <breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu">
-      <div class="right-menu-item">{{name}}</div>
-      <el-dropdown class="avatar-container right-menu-item" trigger="click">
-        <!-- 默认插槽内容 -->
+      <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
           <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
           <i class="el-icon-caret-bottom" />
         </div>
-        <!-- 命名插槽内容 -->
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
             <el-dropdown-item>首页</el-dropdown-item>
@@ -37,8 +34,7 @@ export default {
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar',
-      'name'
+      'avatar'
     ])
   },
   methods: {
@@ -89,11 +85,20 @@ export default {
 
     .right-menu-item {
       display: inline-block;
-      padding: 0 4px;
+      padding: 0 8px;
       height: 100%;
       font-size: 18px;
       color: #5a5e66;
       vertical-align: text-bottom;
+
+      &.hover-effect {
+        cursor: pointer;
+        transition: background .3s;
+
+        &:hover {
+          background: rgba(0, 0, 0, .025)
+        }
+      }
     }
 
     .avatar-container {

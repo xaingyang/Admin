@@ -1,29 +1,26 @@
-import { constantRoutes, lastRoute } from '@/router'
+import { constantRoutes } from '@/router'
 import { login as loginAPI} from '@/api'
 import Layout from '@/layout'
 
-/*
-根据路由权限列表生成路由列表
-主要工作就是将组件路径转换为对应的异步路由组件
+/* 
+遍历后台传来的路由组件字符串，转换为组件对象
 */
 function generateAsyncRoutes(permissionList) {
-
+  
   const accessedRoutes = permissionList.filter(route => {
-    // 得到路由组件名称字符串
+    
     let component = route.component
     if (component) {
       if (component!=="Layout" && component.indexOf('/')!==0) {
         component = '/' + component
       }
       try {
-        // 指定路由的组件
         route.component = component === 'Layout' ? Layout : () => import(`@/views${component}.vue`)
       } catch (e) { // 如果对应的组件不存在, 排除它
         console.log(e)
         return false
       }
     }
-    // 如果有子路由, 递归调用
     if (route.children && route.children.length) {
       route.children = generateAsyncRoutes(route.children)
     }
@@ -33,7 +30,7 @@ function generateAsyncRoutes(permissionList) {
 }
 
 const state = {
-  routes: [], // 常量路由 + 权限路由 + last路由数组
+  routes: [], // 常量路由 + 权限路由数组
   asyncRoutes: [] // 当前用户的权限路由数组
 }
 
@@ -41,14 +38,13 @@ const mutations = {
   ADD_ASYNC_ROUTES: (state, asyncRoutes) => {
     // 保存异步路由
     state.asyncRoutes = asyncRoutes
-    // 将异步路由和lastRoute与常量路由合并成总路由并保存
-    // 注意: 一定要将lastRoute放在最后
-    state.routes = constantRoutes.concat(asyncRoutes, lastRoute)
+    // 将异步路由与常量路由合并成总路由并保存
+    state.routes = constantRoutes.concat(asyncRoutes)
   }
 }
 
 const actions = {
-  /*
+  /* 
   异步生成当前用户的所有路由
   */
   async generateRoutes({ commit }) {
